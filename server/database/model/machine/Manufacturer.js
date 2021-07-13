@@ -1,24 +1,26 @@
 const db = require("../../connection/connection")
-const { STRING, TEXT } = require("sequelize")
+const { DataTypes } = require("sequelize")
 
 const Manufacturer = db.define('manufacturer', {
     name: {
-        type: STRING,
+        type: DataTypes.STRING,
         allowNull: false
     },
     email: {
-        type: STRING,
+        type: DataTypes.STRING,
         validate: {
             isEmail: true
         }
     },
     phone: {
-        type: STRING,
+        type: DataTypes.STRING,
     },
     desc: {
-        type: TEXT
+        type: DataTypes.TEXT
     },
-    productsCat: []
+    productsCat: {
+        type: DataTypes.ABSTRACT
+    }
 })
 
 module.exports = Manufacturer

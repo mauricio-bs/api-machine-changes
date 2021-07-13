@@ -1,9 +1,9 @@
-const { STRING } = require('sequelize')
+const { DataTypes } = require('sequelize')
 const db = require('../../connection/connection')
 
 const role = db.define('role', {
     name: {
-        type: STRING,
+        type: DataTypes.STRING,
         allowNull: false
     }
 })

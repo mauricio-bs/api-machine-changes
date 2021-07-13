@@ -1,23 +1,23 @@
 const db = require("../../connection/connection")
-const { STRING, INTEGER } = require("sequelize")
+const { DataTypes } = require("sequelize")
 const manufacturer = require( "./Manufacturer" )
 const software = require('./Software')
 
 const Ihm = db.define('ihm', {
     model: {
-        type: STRING,
+        type: DataTypes.STRING,
         allowNull: false,
         unique: true
     },
     software: {
-        type: INTEGER,
+        type: DataTypes.INTEGER,
         references: {
             model: software,
             key: 'id'
         }
     },
     manufacturer: {
-        type: INTEGER,
+        type: DataTypes.INTEGER,
         allowNull: false,
         references: {
             model: manufacturer,

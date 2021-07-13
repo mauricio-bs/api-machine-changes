@@ -1,42 +1,36 @@
-const { BOOLEAN, STRING, INTEGER, ENUM } = require("sequelize")
+const { DataTypes } = require("sequelize")
 const db = require("../../connection/connection")
 const shift = require("./shift")
 const role = require('./role')
 
 const user = db.define("user", {
 	name: {
-		type: STRING,
-		allowNull: false,
+		type: DataTypes.STRING,
+		allowNull: false
 	},
 	id8: {
-		type: INTEGER,
+		type: DataTypes.INTEGER,
 		allowNull: false,
-		unique: true,
-		validate: {
-			len: 8,
-		},
+		unique: true
 	},
 	password: {
-		type: STRING,
+		type: DataTypes.STRING,
 		allowNull: false
 	},
 	email: {
-		type: STRING,
-		validate: {
-			isEmail: true,
-			contains: "thyssenkrupp.com",
-		},
+		type: DataTypes.STRING,
+		
 	},
 	role: {
-		type: INTEGER,
+		type: DataTypes.INTEGER,
 		allowNull: false,
 		references: {
 			model: role,
-			key: 'id',
-		},
+			key: 'id'
+		}
 	},
 	shift: {
-		type: INTEGER,
+		type: DataTypes.INTEGER,
 		allowNull: false,
 		references: {
 			model: shift,
@@ -44,14 +38,14 @@ const user = db.define("user", {
 		},
 	},
 	active: {
-		type: BOOLEAN,
+		type: DataTypes.BOOLEAN,
 		defaultValue: true,
 	},
 	access: {
-		type: ENUM,
+		type: DataTypes.ENUM,
 		alllowNull: false,
-		values: [1, 2, 3, 4], // ["Administrador", "Supervisor", "Encarregado", "Tecnico"]
-		defaultValue: 4,
+		values: ["Administrador", "Supervisor", "Encarregado", "Tecnico"], // [1, 2, 3, 4]
+		defaultValue: "Tecnico",
 	},
 })
 

@@ -1,4 +1,4 @@
-const {STRING, INTEGER, ENUM, BOOLEAN, NOW} = require('sequelize')
+const {DataTypes, DATE} = require('sequelize')
 const db = require("../connection/connection")
 
 const User = require('./user/User')
@@ -6,47 +6,47 @@ const machine = require('./machine/Machine')
 
 const modification = db.define('modification', {
     description: {
-        type: STRING,
+        type: DataTypes.STRING,
         allowNull: false
     },
     type: {
-        type: ENUM,
+        type: DataTypes.ENUM,
         values: ['Provisório', 'Definitiva'],
         allowNull: false
     },
     class: {
-        type: ENUM,
+        type: DataTypes.ENUM,
         values: ['Redução de perda', 'Saúde']
     },
     swChanges: {
-        type: BOOLEAN,
+        type: DataTypes.BOOLEAN,
         allowNull: false,
         default: false
     },
     hwChanges: {
-        type: BOOLEAN,
+        type: DataTypes.BOOLEAN,
         allowNull: false,
         default: false
     },
     sponsorHWAnal: {
-        type: BOOLEAN,
+        type: DataTypes.BOOLEAN,
         defaultValue: false,
         allowNull: false
     },
     eleScheme: {
-        type: BOOLEAN,
+        type: DataTypes.BOOLEAN,
         defaultValue: false
     },
     sponsorSWAnal: {
-        type: BOOLEAN,
+        type: DataTypes.BOOLEAN,
         defaultValue: false
     },
     afctSecurity: {
-        type: BOOLEAN,
+        type: DataTypes.BOOLEAN,
         defaultValue: false
     },
     machine: {
-        type: INTEGER,
+        type: DataTypes.INTEGER,
         allowNull: false,
         references: {
             model: machine,
@@ -54,7 +54,7 @@ const modification = db.define('modification', {
         }
     },
     user: {
-        type: INTEGER,
+        type: DataTypes.INTEGER,
         allowNull: false,
         references: {
             model: User,
@@ -62,14 +62,14 @@ const modification = db.define('modification', {
         }
     },
     participant: {
-        type: INTEGER,
+        type: DataTypes.INTEGER,
         references: {
             model: User,
             key: 'id'
         }
     },
     sponsor: {
-        type: INTEGER,
+        type: DataTypes.INTEGER,
         allowNull: false,
         references: {
             model: User,
@@ -77,9 +77,9 @@ const modification = db.define('modification', {
         }
     },
     date: {
-        type: DATE,
+        type: DataTypes.DATE,
         allowNull: false,
-        defaultValue: NOW
+        defaultValue: new Date().toLocaleDateString('pt-br')
     }
 })
 

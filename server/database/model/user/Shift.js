@@ -1,22 +1,22 @@
-const { STRING, TIME, INTEGER } = require("sequelize")
+const { DataTypes } = require("sequelize")
 const db = require("../../connection/connection")
 const user = require('./user')
 
 const shift = db.define("shift", {
     name: {
-        type: STRING,
+        type: DataTypes.STRING,
         allowNull: false,
     },
     start: {
-        type: TIME,
+        type: DataTypes.TIME,
         allowNull: false
     },
     end: {
-        type: TIME,
+        type: DataTypes.TIME,
         allowNull: false
     },
     sponsor: {
-        type: INTEGER,
+        type: DataTypes.INTEGER,
         references: {
             model: user,
             key: 'id'

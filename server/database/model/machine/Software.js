@@ -1,5 +1,5 @@
 const { INTEGER, STRING, ABSTRACT} = require("sequelize")
-const db = require("../../database/connection")
+const db = require("../../connection/connection")
 const manufacturer = require( "./Manufacturer" )
 
 const Software = db.define('software', {

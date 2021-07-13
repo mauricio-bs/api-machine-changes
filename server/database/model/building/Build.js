@@ -1,9 +1,9 @@
-const { STRING, INTEGER } = require("sequelize")
-const db = require("../database/connection")
+const { DataTypes } = require("sequelize")
+const db = require("../../connection/connection")
 
 const Build = db.define('build', {
     name: {
-        type: STRING,
+        type: DataTypes.STRING,
         allowNull: false
     }
 })

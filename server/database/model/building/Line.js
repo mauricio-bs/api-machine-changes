@@ -1,21 +1,21 @@
-const { STRING, INTEGER } = require("sequelize")
-const db = require("../database/connection")
+const { DataTypes } = require("sequelize")
+const db = require("../../connection/connection")
 const build = require('./Build')
 
 
 const Line = db.define('line', {
     nickname: {
-        type: STRING,
+        type: DataTypes.STRING,
         allowNull: false,
         unique: true
     },
     alternName: {
-        type: STRING,
+        type: DataTypes.STRING,
         allowNull: false,
         unique: true
     },
     build: {
-        type: INTEGER,
+        type: DataTypes.INTEGER,
         allowNull: false,
         references: {
             model: build,

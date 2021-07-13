@@ -1,5 +1,5 @@
-const db = require("../../connection/connection")
-const { INTEGER, STRING } = require("sequelize")
+const db = require('../../connection/connection')
+const { DataTypes } = require("sequelize")
 //Models of machine components
 const cnc = require('./CNC')
 const driver = require( "./Driver" )
@@ -9,7 +9,7 @@ const plc = require('./PLC')
 
 const Machine = db.define('machine', {
     number: {
-        type: INTEGER,
+        type: DataTypes.INTEGER,
         allowNull: false,
         unique: true,
         validate: {
@@ -17,43 +17,43 @@ const Machine = db.define('machine', {
         }
     },
     model: {
-        type: STRING,
+        type: DataTypes.STRING,
         allowNull: false
     },
     func: { //Fresa, Torno, Tempera e etc.
-        type: STRING,
+        type: DataTypes.STRING,
         allowNull: false
     },
     cnc: {
-        type: INTEGER,
+        type: DataTypes.INTEGER,
         references: {
             model: cnc,
             key: 'id'
         }
     },
     driver: {
-        type: INTEGER,
+        type: DataTypes.INTEGER,
         references: {
             model: driver,
             key: 'id'
         }
     },
     ihm: {
-        type: INTEGER,
+        type: DataTypes.INTEGER,
         references: {
             model: ihm,
             key: 'id'
         }
     },
     plc: {
-        type: INTEGER,
+        type: DataTypes.INTEGER,
         references: {
             model: plc,
             key: 'id'
         }
     },
     manufacturer: {
-        type: INTEGER,
+        type: DataTypes.INTEGER,
         references: {
             model: manufacturer,
             key: 'id'
