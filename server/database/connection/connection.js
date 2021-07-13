@@ -1,7 +1,7 @@
 const Sequelize = require("sequelize")
-const sequelize = new Sequelize("database", "username", "password", {
+const sequelize = new Sequelize("dbtest", "development", "Noukchott@1679", {
 	dialect: "mysql",
-	host: "db_locate",
+	host: "localhost",
 })
 
 sequelize.authenticate()
