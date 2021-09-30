@@ -3,6 +3,8 @@
 
 # production
 /build
+.vscode
 
 # misc
 npm-debug.log*
+.env
