@@ -2,54 +2,41 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('user', {
+    await queryInterface.createTable('software', {
       id: {
-        type: Sequelize.UUID,
-        defaultValue: Sequelize.UUIDV4,
+        type: Sequelize.INTEGER,
         allowNull: false,
         primaryKey: true,
-      },
-      id8: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
         unique: true,
       },
-      name: {
+      model: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      email: {
+      version: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      role: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-      },
-      shift: {
+      manufacturer: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'shift',
+          model: 'manufacturer',
           key: 'id',
         },
       },
-      password: {
-        type: Sequelize.STRING,
+      created_at: {
+        type: Sequelize.DATE,
         allowNull: false,
       },
-      active: {
-        type: Sequelize.BOOLEAN,
-        allowNull: false,
-      },
-      access: {
-        type: Sequelize.INTEGER,
+      updated_at: {
+        type: Sequelize.DATE,
         allowNull: false,
       },
     })
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('user')
+    await queryInterface.dropTable('software')
   },
 }

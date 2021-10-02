@@ -2,37 +2,37 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('shift', {
+    await queryInterface.createTable('plc', {
       id: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
+        unique: true,
       },
-      name: {
+      model: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      start: {
-        type: Sequelize.TIME,
-        allowNull: false,
-      },
-      end: {
-        type: Sequelize.TIME,
-        allowNull: false,
-      },
-      sponsor: {
+      manufacturer: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        reference: {
-          model: 'user',
+        references: {
+          model: 'manufacturer',
           key: 'id',
         },
+      },
+      created_at: {
+        type: Sequelize.DATE,
+        allowNull: false,
+      },
+      updated_at: {
+        type: Sequelize.DATE,
+        allowNull: false,
       },
     })
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('shift')
+    await queryInterface.dropTable('plc')
   },
 }

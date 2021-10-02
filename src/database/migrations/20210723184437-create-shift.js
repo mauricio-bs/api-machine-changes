@@ -2,7 +2,7 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('role', {
+    await queryInterface.createTable('shift', {
       id: {
         type: Sequelize.INTEGER,
         allowNull: false,
@@ -12,6 +12,14 @@ module.exports = {
       },
       name: {
         type: Sequelize.STRING,
+        allowNull: false,
+      },
+      start_time: {
+        type: Sequelize.TIME,
+        allowNull: false,
+      },
+      end_time: {
+        type: Sequelize.TIME,
         allowNull: false,
       },
       created_at: {
@@ -26,6 +34,6 @@ module.exports = {
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('role')
+    await queryInterface.dropTable('shift')
   },
 }

@@ -2,11 +2,10 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('role', {
+    await queryInterface.createTable('machine_function', {
       id: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
         unique: true,
       },
@@ -26,6 +25,6 @@ module.exports = {
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('role')
+    await queryInterface.dropTable('machine_function')
   },
 }
