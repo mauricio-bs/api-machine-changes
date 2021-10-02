@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  api:
+    container_name: api-machine-changes
+    build: '.'
+    volumes:
+      - .:/src/node/app
+      - /src/node/app/node_modules
+    networks:
+      - app-connect
+    ports:
+      - '5000:5000'
+    depends_on:
+      - postgres
+
+  postgres:
+    container_name: postgres-database
+    image: postgres:13
+    volumes:
+      - postgres-data:/data
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_USER: ${DATABASE_USERNAME}
+      POSTGRES_PASSWORD: ${DATABASE_PSWD}
+    networks:
+      - app-connect
+
+volumes:
+  postgres-data:
+
+networks:
+  app-connect:
+    driver: bridge
