@@ -8,7 +8,6 @@ class Manufacturer extends Model {
         email: Sequelize.STRING,
         phone: Sequelize.STRING,
         description: Sequelize.TEXT,
-        categories: Sequelize.ARRAY,
       },
       {
         sequelize,

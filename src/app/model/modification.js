@@ -6,7 +6,8 @@ class Modification extends Model {
       {
         desciption: Sequelize.TEXT,
         type: Sequelize.ENUM,
-        date: Sequelize.DATE,
+        start_date: Sequelize.DATE,
+        end_date: Sequelize.DATE,
         softwareChanges: Sequelize.BOOLEAN,
         hardwareChanges: Sequelize.BOOLEAN,
         sponsorAnalysis: Sequelize.BOOLEAN,
@@ -25,4 +26,5 @@ class Modification extends Model {
     this.belongsTo(models.Machine)
   }
 }
+
 export default Modification

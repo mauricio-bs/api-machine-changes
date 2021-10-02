@@ -5,7 +5,6 @@ class Driver extends Model {
     super.init(
       {
         model: Sequelize.STRING,
-        manufacturer: Sequelize.INTEGER,
       },
       {
         sequelize,
@@ -19,6 +18,7 @@ class Driver extends Model {
       foreignKey: 'driver_id',
       as: 'machine_driver',
     })
+    this.belongsTo(models.Manufacturer)
   }
 }
 

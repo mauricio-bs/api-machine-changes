@@ -6,7 +6,6 @@ class Machine extends Model {
       {
         number: Sequelize.NUMBER,
         model: Sequelize.STRING,
-        occupation: Sequelize.STRING,
         active: Sequelize.BOOLEAN,
       },
       {
@@ -17,6 +16,8 @@ class Machine extends Model {
   }
 
   static associate(models) {
+    // Informations
+    this.belongsTo(models.MachineFunction)
     this.belongsTo(models.Manufacturer)
     // Components
     this.belongsTo(models.CNC)

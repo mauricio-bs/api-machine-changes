@@ -6,7 +6,6 @@ class Software extends Model {
       {
         name: Sequelize.STRING,
         version: Sequelize.STRING,
-        manufacturer: Sequelize.INTEGER,
       },
       {
         sequelize,
