@@ -10,8 +10,10 @@ import Line from '../app/model/building/Line'
 import Building from '../app/model/building/Building'
 /* Machines */
 import Machines from '../app/model/machine/Machine'
+import MachineFunction from '../app/model/machine/MachineFunction'
 /* Manufacturer */
 import Manufacturer from '../app/model/machine/Manufacturer'
+import ManufacturerCategory from '../app/model/machine/ManufacturerCategory'
 /* Components */
 /* CNC */
 import CNC from '../app/model/machine/CNC'
@@ -37,6 +39,8 @@ const models = [
   Driver,
   IHM,
   Software,
+  MachineFunction,
+  ManufacturerCategory,
 ]
 
 class Database {
