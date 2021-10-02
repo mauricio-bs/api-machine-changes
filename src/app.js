@@ -1,8 +1,11 @@
 import express from 'express'
 import cors from 'cors'
-import routes from './routes'
-// import { resolve } from 'path'
+import fs from 'fs'
+import path from 'path'
+import morgan from 'morgan'
+import { format } from 'date-fns'
 
+import routes from './routes'
 import './database'
 
 class App {
@@ -11,6 +14,7 @@ class App {
 
     this.middlewares()
     this.routes()
+    // this.logs()
   }
 
   middlewares() {
@@ -24,9 +28,12 @@ class App {
 
   logs() {
     // Create a log archive
-    // const log = fs.createWriteStream(path.join(__dirname, '/server/logs', `system${moment().format('DD-MM-YYYY')}.log`), {flags: 'a'})
+    const log = fs.createWriteStream(
+      path.join(__dirname, '/logs', `system${format('dd-MM-yyy')}.log`),
+      { flags: 'a' }
+    )
     // Store the logs in the archive created by previous line
-    // app.use(morgan('dev', {stream: log}))
+    this.app.use(morgan('dev', { stream: log }))
   }
 }
 
