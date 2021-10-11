@@ -5,8 +5,6 @@ class Manufacturer extends Model {
     super.init(
       {
         name: Sequelize.STRING,
-        email: Sequelize.STRING,
-        phone: Sequelize.STRING,
         description: Sequelize.TEXT,
       },
       {
@@ -17,6 +15,10 @@ class Manufacturer extends Model {
   }
 
   static associate(models) {
+    // Informations
+    this.belongsTo(models.ManufacturerCategory)
+    this.belongsTo(models.ManufacturerEmail)
+    this.belongsTo(models.ManufacturerPhone)
     // Machine
     this.hasMany(models.Machine, {
       foreignKey: 'manufacturer_id',

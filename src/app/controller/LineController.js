@@ -8,11 +8,11 @@ class LineController {
     const { query, building, page = 1, limit = 2000 } = req.query
     let match = {}
 
-    if (!!building) {
+    if (building) {
       match.building = building
     }
 
-    if (!!query) {
+    if (query) {
       match = {
         ...match,
         [Op.or]: [
@@ -122,7 +122,7 @@ class LineController {
         where: { alternate_name },
       })
 
-      if (nicknameExists.id != id || alternativeNameExists.id != id) {
+      if (nicknameExists.id !== id || alternativeNameExists.id !== id) {
         throw new Error('Nickname or alternative name already registered')
       }
 

@@ -20,11 +20,16 @@ module.exports = {
       },
       email: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
+        unique: true,
       },
       role: {
         type: Sequelize.INTEGER,
         allowNull: false,
+        references: {
+          model: 'role',
+          key: 'id',
+        },
       },
       shift: {
         type: Sequelize.INTEGER,

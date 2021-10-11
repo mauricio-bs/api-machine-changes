@@ -26,7 +26,7 @@ class Machine extends Model {
     this.belongsTo(models.Driver)
     this.belongsTo(models.Software)
     // Modification
-    this.hasOne(models.Modification, {
+    this.hasOne(models.Maintence, {
       foreignKey: 'machine_id',
       as: 'machine',
     })

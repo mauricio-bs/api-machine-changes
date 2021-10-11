@@ -16,6 +16,7 @@ class Line extends Model {
 
   static associate(models) {
     this.belongsTo(models.Building)
+    this.hasOne(models.Machine, { foreignKey: 'line_id', as: 'line' })
   }
 }
 

@@ -15,15 +15,15 @@ class SessionController {
     const { id8, password } = req.body
 
     try {
-      const user = User.findOne({ where: { id8 } })
+      const user = await User.findOne({ where: { id8 } })
 
       if (!user) id8OrPasswordIncorrect()
+
+      if (!(await user.checkPassword(password))) id8OrPasswordIncorrect()
 
       if (user.active !== true) {
         return res.status(401).json({ error: 'This account is inactive' })
       }
-
-      if (!(await user.checkPassword(password))) id8OrPasswordIncorrect()
 
       return res.status(200).json({
         message: `Welcome ${user.name}`,

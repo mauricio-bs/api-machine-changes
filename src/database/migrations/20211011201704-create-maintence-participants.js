@@ -2,38 +2,37 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('line', {
+    await queryInterface.createTable('maintence_participants', {
       id: {
         type: Sequelize.INTEGER,
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
       },
-      name: {
-        type: Sequelize.STRING,
-        allowNull: false,
-        unique: true,
-      },
-      bulding: {
+      maintence_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'building',
+          model: 'maintence',
           key: 'id',
         },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL',
       },
-      created_at: {
-        type: Sequelize.DATE,
+      participant_id: {
+        type: Sequelize.UUID,
         allowNull: false,
-      },
-      updated_at: {
-        type: Sequelize.DATE,
-        allowNull: false,
+        references: {
+          model: 'user',
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL',
       },
     })
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('line')
+    await queryInterface.dropTable('maintence_participants')
   },
 }

@@ -1,24 +1,25 @@
 import User from '../model/user/User'
 import userCreateValidation from '../validation/userCreateValidation'
 import userValidation from '../validation/userValidation'
-import sequelize, { Op } from 'sequelize'
+import { Op } from 'sequelize'
 
+import sequelize from '../helpers/transactionConfig'
 class UserController {
   async index(req, res) {
     const { query, status, role, shift, page = 1, limit = 2000 } = req.query
 
     let match = {}
 
-    if (!!status) {
+    if (status) {
       match.active = status
     }
-    if (!!role) {
+    if (role) {
       match.role = role
     }
-    if (!!shift) {
+    if (shift) {
       match.shift = shift
     }
-    if (!!query) {
+    if (query) {
       match = {
         ...match,
         [Op.or]: [
@@ -49,7 +50,7 @@ class UserController {
         include: [
           {
             association: 'shift',
-            attributes: ['start_time', 'end_time'],
+            attributes: ['start_time', 'end_time', 'shift_manager'],
           },
           {
             association: 'role',
@@ -81,39 +82,35 @@ class UserController {
 
       return res.status(200).json(user)
     } catch (err) {
-      if (err.message) {
-        return res.status(400).json({ error: err.message })
-      } else {
-        return res
-          .status(500)
-          .json({ message: 'Failed to find user', error: err })
-      }
+      return res.status(400).json({ error: err.message })
     }
   }
 
   async store(req, res) {
     if (!(await userCreateValidation.isValid(req.body))) {
-      return res.status(400).json({ message: 'Invalid data type' })
+      return res.status(400).json({ error: 'Invalid data type' })
     }
 
     const { name, id8, email, password, active } = req.body
 
     try {
-      const id8Registered = User.findOne({ where: { id8 } })
-      if (id8Registered) throw new Error('8ID already registered')
+      await sequelize.transaction(async (transaction) => {
+        const id8Registered = User.findOne({ transaction, where: { id8 } })
+        if (id8Registered) throw new Error('8ID already registered')
 
-      const emailRegistered = await User.findOne({ where: { email } })
-      if (emailRegistered) throw new Error('Email already registered')
+        const emailRegistered = await User.findOne({
+          transaction,
+          where: { email },
+        })
+        if (emailRegistered) throw new Error('Email already registered')
 
-      await User.create({ name, name, id8, email, password, active })
+        await User.create(
+          { name, id8, email, password, active },
+          { transaction }
+        )
+      })
     } catch (err) {
-      if (err.message) {
-        return res.status(400).json({ error: err.message })
-      } else {
-        return res
-          .status(500)
-          .json({ message: 'Failed to create user', error: err })
-      }
+      return res.status(400).json({ error: err.message })
     }
     return res.status(201).json({ message: 'User created successfully' })
   }
@@ -123,31 +120,34 @@ class UserController {
       return res.status(400).json({ error: 'Missing information: ID' })
     }
     if (!(await userValidation.isValid(req.body))) {
-      return res.status(400).json({ message: 'Invalid data type' })
+      return res.status(400).json({ errro: 'Invalid data type' })
     }
 
     const { id } = req.params
     const { name, id8, email, active } = req.body
 
     try {
-      const user = await User.findByPk(id)
-      if (!user) throw new Error('User not found')
+      await sequelize.transaction(async (transaction) => {
+        const user = await User.findByPk(id, { transaction })
+        if (!user) throw new Error('User not found')
 
-      const id8Registered = User.findOne({ where: { id8 } })
-      if (id8Registered.id != id) throw new Error('8ID already registered')
+        const id8Registered = User.findOne({ transaction, where: { id8 } })
+        if (id8Registered.id !== id) throw new Error('8ID already registered')
 
-      const emailRegistered = await User.findOne({ where: { email } })
-      if (emailRegistered.id != id) throw new Error('Email already registered')
+        const emailRegistered = await User.findOne({
+          transaction,
+          where: { email },
+        })
+        if (emailRegistered.id !== id)
+          throw new Error('Email already registered')
 
-      await User.update({ name, name, id8, email, active }, { where: { id } })
+        await User.update(
+          { name, id8, email, active },
+          { transaction, where: { id } }
+        )
+      })
     } catch (err) {
-      if (err.message) {
-        return res.status(400).json({ error: err.message })
-      } else {
-        return res
-          .status(500)
-          .json({ message: 'Failed to create user', error: err })
-      }
+      return res.status(400).json({ error: err.message })
     }
     return res.status(201).json({ message: 'User updated successfully' })
   }

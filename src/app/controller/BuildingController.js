@@ -51,7 +51,7 @@ class BuildController {
 
     try {
       const nameExists = await Building.findOne({ where: { name } })
-      if (nameExists.id != id) {
+      if (nameExists.id !== id) {
         throw new Error('Name already registered')
       }
 

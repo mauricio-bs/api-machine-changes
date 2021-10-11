@@ -6,7 +6,7 @@ class ManufacturerCategory extends Model {
   static init(sequelize) {
     super.init(
       {
-        category: Sequelize.STRING,
+        name: Sequelize.STRING,
       },
       {
         sequelize,
@@ -14,7 +14,12 @@ class ManufacturerCategory extends Model {
     )
     return this
   }
-  static associate(models) {}
+  static associate(models) {
+    this.hasMany(models.Manufacturer, {
+      foreignKey: 'manufacturer_category_id',
+      as: 'manufacturer_category',
+    })
+  }
 }
 
 export default ManufacturerCategory

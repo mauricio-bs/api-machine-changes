@@ -2,18 +2,22 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('driver', {
+    await queryInterface.createTable('manufacturer_phone', {
       id: {
         type: Sequelize.INTEGER,
         allowNull: false,
         primaryKey: true,
         autoIncrement: true,
       },
-      model: {
+      owner_name: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      manufacturer: {
+      phone: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      company: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
@@ -21,18 +25,10 @@ module.exports = {
           key: 'id',
         },
       },
-      created_at: {
-        type: Sequelize.DATE,
-        allowNull: false,
-      },
-      updated_at: {
-        type: Sequelize.DATE,
-        allowNull: false,
-      },
     })
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('driver')
+    await queryInterface.dropTable('manufacturer_phone')
   },
 }

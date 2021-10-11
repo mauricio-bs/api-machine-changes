@@ -1,5 +1,5 @@
 import IHM from '../model/machine/IHM'
-import Manufacturer from '../model/machine/Manufacturer'
+import Manufacturer from '../model/manufacturer/Manufacturer'
 import ihmValidation from '../validation/ihmValidation'
 import sequelize, { Op } from 'sequelize'
 
@@ -9,11 +9,11 @@ class IhmController {
 
     let match = {}
 
-    if (!!manufacturer) {
+    if (manufacturer) {
       match.ihm_manufacturer = manufacturer
     }
 
-    if (!!query) {
+    if (query) {
       match = {
         ...match,
         [Op.or]: [
@@ -51,6 +51,7 @@ class IhmController {
       return res.status(500).json({ error: err })
     }
   }
+
   async store(req, res) {
     if (!(await ihmValidation.isValid(req.body))) {
       return res.status(400).json({ error: 'Invalid data type' })
@@ -94,8 +95,8 @@ class IhmController {
       const manufacturerExists = await Manufacturer.findByPk(manufacturer)
       if (!manufacturerExists) throw new Error('Manufacturer not found')
 
-      const modelExists = Ihm.findOne({ where: { model } })
-      if (modelExists.id != id) throw new Error('Model already registered')
+      const modelExists = IHM.findOne({ where: { model } })
+      if (modelExists.id !== id) throw new Error('Model already registered')
 
       await IHM.update({ model, manufacturer, software }, { where: { id } })
     } catch (err) {

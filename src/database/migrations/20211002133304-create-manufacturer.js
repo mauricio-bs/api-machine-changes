@@ -4,23 +4,25 @@ module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('manufacturer', {
       id: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
         allowNull: false,
-        unique: true,
         primaryKey: true,
       },
       name: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      email: {
-        type: Sequelize.STRING,
-      },
-      phone: {
-        type: Sequelize.STRING,
-      },
       description: {
         type: Sequelize.TEXT,
+      },
+      category: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+        references: {
+          model: 'manufacturer_category',
+          key: 'id',
+        },
       },
       created_at: {
         type: Sequelize.DATE,

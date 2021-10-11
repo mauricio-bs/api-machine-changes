@@ -1,5 +1,5 @@
 import Sequelize, { Model } from 'sequelize'
-import bcrypt from 'bcryptjs'
+import { hash, compare } from 'bcryptjs'
 
 class User extends Model {
   static init(sequelize) {
@@ -10,7 +10,7 @@ class User extends Model {
         email: Sequelize.STRING,
         password: Sequelize.VIRTUAL,
         password_hash: Sequelize.STRING,
-        active: Sequelize.BOOLEAN,
+        is_active: Sequelize.BOOLEAN,
         access: Sequelize.INTEGER,
       },
       {
@@ -19,31 +19,33 @@ class User extends Model {
     )
     this.addHook('beforeSave', async (user) => {
       if (user.password) {
-        user.password_hash = await bcrypt.hash(user.password, 5)
+        user.password_hash = await hash(user.password, 10)
       }
     })
+
     return this
   }
 
   checkPassword(password) {
-    return bcrypt.compare(password, this.password_hash)
+    return compare(password, this.password_hash)
   }
 
   static associate(models) {
     // User infromations
-    this.belongsTo(models.Shift)
     this.belongsTo(models.Role)
-    this.hasOne(models.Shift, { foreignKey: 'sponsor_id', as: 'sponsor' })
-    // Modification
-    this.hasMany(models.Modification, {
+    this.belongsTo(models.Shift)
+    this.hasOne(models.Shift, { foreignKey: 'sponsor_id', as: 'shift_manager' })
+    // Maintence
+    this.belongsToMany(models.Maintence, {
+      through: 'maintence_participants',
+      as: 'maintence',
       foreignKey: 'participant_id',
-      as: 'participant',
     })
-    this.hasOne(models.Modification, {
-      foreignKey: 'user_id',
+    this.hasOne(models.Maintence, {
+      foreignKey: 'technican_id',
       as: 'technican',
     })
-    this.hasOne(models.Modification, {
+    this.hasOne(models.Maintence, {
       foreignKey: 'sponsor_id',
       as: 'sponsor',
     })

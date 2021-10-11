@@ -1,11 +1,11 @@
 import Sequelize, { Model } from 'sequelize'
 
-class Modification extends Model {
+class Maintence extends Model {
   static init(sequelize) {
     super.init(
       {
         desciption: Sequelize.TEXT,
-        type: Sequelize.ENUM,
+        type: Sequelize.INTEGER,
         start_date: Sequelize.DATE,
         end_date: Sequelize.DATE,
         softwareChanges: Sequelize.BOOLEAN,
@@ -22,9 +22,14 @@ class Modification extends Model {
   }
 
   static associate(models) {
-    this.belongsTo(models.User) // many users, 1 User (technican) / 1 Sponsor / many participants
+    this.belongsTo(models.User) // 1 User (technican) / 1 Sponsor
+    this.belongsToMany(models.User, {
+      through: 'maintence_participants',
+      as: 'participants',
+      foreignKey: 'maintence_id',
+    })
     this.belongsTo(models.Machine)
   }
 }
 
-export default Modification
+export default Maintence

@@ -2,7 +2,7 @@ import Sequelize, { Model } from 'sequelize'
 
 class Shift extends Model {
   static init(sequelize) {
-    this.init(
+    super.init(
       {
         name: Sequelize.STRING,
         start_time: Sequelize.TIME,
@@ -16,7 +16,7 @@ class Shift extends Model {
   }
 
   static associate(models) {
-    this.hasOne(models.User, { foreignKey: 'shift_id', as: 'shift' })
+    this.hasOne(models.User, { foreignKey: 'shift_id', as: 'shift' }) // User shift
     this.belongsTo(models.User)
   }
 }

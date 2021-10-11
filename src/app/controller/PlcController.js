@@ -1,7 +1,9 @@
 import PLC from '../model/machine/PLC'
-import Manufacturer from '../model/machine/Manufacturer'
+import Manufacturer from '../model/manufacturer/Manufacturer'
 import componentValidation from '../validation/componentValidation'
-import sequelize, { Op } from 'sequelize'
+import { Op } from 'sequelize'
+
+import sequelize from '../helpers/transactionConfig'
 
 class PlcController {
   async index(req, res) {
@@ -9,11 +11,11 @@ class PlcController {
 
     let match = {}
 
-    if (!!manufacturer) {
+    if (manufacturer) {
       match.PLC_manufacturer = manufacturer
     }
 
-    if (!!query) {
+    if (query) {
       match = {
         ...match,
         [Op.or]: [
@@ -48,19 +50,39 @@ class PlcController {
       return res.status(500).json({ error: err })
     }
   }
+
+  async show(req, res) {
+    if (!req.params.id) {
+      return res.status(400).json({ error: 'Missing information: ID' })
+    }
+    const { id } = req.params
+    try {
+      const plc = await PLC.findByPk(id)
+      if (!plc) throw new Error('PLC not found')
+
+      return res.status(200).json(plc)
+    } catch (err) {
+      return res.status(400).json({ error: err.mesage })
+    }
+  }
+
   async store(req, res) {
     if (!(await componentValidation.isValid(req.body))) {
       return res.status(400).json({ error: 'Invalid data type' })
     }
     const { model, manufacturer } = req.body
     try {
-      const manufacturerExists = await Manufacturer.findByPk(manufacturer)
-      if (!manufacturerExists) throw new Error('Manufacturer not found')
+      await sequelize.transaction(async (transaction) => {
+        const manufacturerExists = await Manufacturer.findByPk(manufacturer, {
+          transaction,
+        })
+        if (!manufacturerExists) throw new Error('Manufacturer not found')
 
-      const modelExists = PLC.findOne({ where: { model } })
-      if (modelExists) throw new Error('Model already registered')
+        const modelExists = PLC.findOne({ transaction, where: { model } })
+        if (modelExists) throw new Error('Model already registered')
 
-      await PLC.create({ model, manufacturer })
+        await PLC.create({ model, manufacturer }, { transaction })
+      })
     } catch (err) {
       if (err.message) {
         return res.status(400).json({ error: err.message })
@@ -85,16 +107,23 @@ class PlcController {
     const { id } = req.params
 
     try {
-      const plcExists = PLC.findByPk(id)
-      if (!plcExists) throw new Error('PLC not found')
+      await sequelize.transaction(async (transaction) => {
+        const plcExists = PLC.findByPk(id)
+        if (!plcExists) throw new Error('PLC not found')
 
-      const manufacturerExists = await Manufacturer.findByPk(manufacturer)
-      if (!manufacturerExists) throw new Error('Manufacturer not found')
+        const manufacturerExists = await Manufacturer.findByPk(manufacturer, {
+          transaction,
+        })
+        if (!manufacturerExists) throw new Error('Manufacturer not found')
 
-      const modelExists = PLC.findOne({ where: { model } })
-      if (modelExists.id != id) throw new Error('Model already registered')
+        const modelExists = PLC.findOne({ transaction, where: { model } })
+        if (modelExists.id !== id) throw new Error('Model already registered')
 
-      await PLC.update({ model, manufacturer }, { where: { id } })
+        await PLC.update(
+          { model, manufacturer },
+          { transaction, where: { id } }
+        )
+      })
     } catch (err) {
       if (err.message) {
         return res.status(400).json({ error: err.message })
@@ -116,13 +145,7 @@ class PlcController {
 
       await PLC.destroy({ where: { id } })
     } catch (err) {
-      if (!err.message) {
-        return res.status(500).json({ error: err.message })
-      } else {
-        return res
-          .status(500)
-          .json({ message: 'Failed to delete PLC', error: err })
-      }
+      return res.status(500).json({ error: err.message })
     }
   }
 }

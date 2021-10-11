@@ -1,9 +1,11 @@
 import Role from '../model/user/Role'
 import roleValidation from '../validation/roleValidation'
 
+import sequelize from '../helpers/transactionConfig'
+
 class RoleController {
   async index(req, res) {
-    const { page = 1, limit = 2000 } = req.query
+    const { page = 1, limit = 100 } = req.query
     try {
       const roles = await Role.findAndCountAll({
         offset: (page - 1) * limit,
@@ -12,9 +14,7 @@ class RoleController {
       res.setHeader('x-total-count', roles.count)
       return res.status(200).json(roles.rows)
     } catch (err) {
-      return res
-        .status(500)
-        .json({ message: 'Failed to search roles', error: err })
+      return res.status(500).json({ error: err.message })
     }
   }
 
@@ -22,6 +22,7 @@ class RoleController {
     if (!req.params.id) {
       return res.status(400).json({ error: 'Missing information: ID' })
     }
+    const { id } = req.params
 
     try {
       const role = Role.findByPk(id)
@@ -29,13 +30,7 @@ class RoleController {
 
       return res.status(200).json(role)
     } catch (err) {
-      if (err.message) {
-        return res.status(400).json({ error: err.message })
-      } else {
-        return res
-          .status(500)
-          .json({ message: 'Failed to find role', error: err })
-      }
+      return res.status(400).json({ error: err.message })
     }
   }
 
@@ -47,18 +42,14 @@ class RoleController {
     const { name } = req.body
 
     try {
-      const nameExists = await Role.findOne({ where: { name } })
-      if (nameExists) throw new Error('Name already in use')
+      await sequelize.transaction(async (transaction) => {
+        const nameExists = await Role.findOne({ transaction, where: { name } })
+        if (nameExists) throw new Error('Name already in use')
 
-      await Role.create({ name })
+        await Role.create({ name }, { transaction })
+      })
     } catch (err) {
-      if (err.message) {
-        return res.status(400).json({ error: err.message })
-      } else {
-        return res
-          .status(500)
-          .json({ message: 'Failed to create role', error: err })
-      }
+      return res.status(400).json({ error: err.message })
     }
   }
 
@@ -70,18 +61,14 @@ class RoleController {
     const { id } = req.params
 
     try {
-      const nameExists = await Role.findOne({ where: { name } })
-      if (nameExists.id != id) throw new Error('Name already in use')
+      await sequelize.transaction(async (transaction) => {
+        const nameExists = await Role.findOne({ transaction, where: { name } })
+        if (nameExists.id !== id) throw new Error('Name already in use')
 
-      await Role.create({ name })
+        await Role.create({ name }, { transaction })
+      })
     } catch (err) {
-      if (err.message) {
-        return res.status(400).json({ error: err.message })
-      } else {
-        return res
-          .status(500)
-          .json({ message: 'Failed to create role', error: err })
-      }
+      return res.status(400).json({ error: err.message })
     }
   }
 
@@ -96,13 +83,7 @@ class RoleController {
 
       await Role.destroy({ where: { id } })
     } catch (err) {
-      if (err.message) {
-        return res.status(400).json({ error: err.message })
-      } else {
-        return res
-          .status(500)
-          .json({ message: 'Failed to delete role', error: err })
-      }
+      return res.status(400).json({ error: err.message })
     }
     return res.status(204).json()
   }

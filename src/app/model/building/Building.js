@@ -14,7 +14,11 @@ class Building extends Model {
   }
 
   static associate(models) {
-    this.hasMany(models.Line, { foreignKey: 'building_id', as: 'building' })
+    this.hasMany(models.Line, {
+      foreignKey: 'building_id',
+      as: 'building_line',
+    })
+    this.hasOne(models.Machine, { foreignKey: 'building_id', as: 'building' })
   }
 }
 export default Building

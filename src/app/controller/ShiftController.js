@@ -2,6 +2,8 @@ import Shift from '../model/user/Role'
 import shiftValidation from '../validation/shiftValidation'
 import { isValid } from 'date-fns'
 
+import sequelize from '../helpers/transactionConfig'
+
 class ShiftController {
   async index(req, res) {
     const { page = 1, limit = 2000 } = req.query
@@ -49,24 +51,23 @@ class ShiftController {
     const { name, start_time, end_time, sponsor } = req.body
 
     try {
-      if (!isValid(start_time) || !isValid(end_time)) {
-        return res.status(400).json({ error: 'Invalid data type' })
-      }
+      await sequelize.transaction(async (transaction) => {
+        if (!isValid(start_time) || !isValid(end_time)) {
+          return res.status(400).json({ error: 'Invalid data type' })
+        }
 
-      const nameExists = await Shift.findOne({ where: { name } })
-      if (nameExists) throw new Error('Name already in use')
+        const nameExists = await Shift.findOne({ transaction, where: { name } })
+        if (nameExists) throw new Error('Name already in use')
 
-      await Shift.create({ name, start_time, end_time, sponsor })
+        await Shift.create(
+          { name, start_time, end_time, sponsor },
+          { transaction }
+        )
+      })
     } catch (err) {
-      if (err.message) {
-        return res.status(400).json({ error: err.message })
-      } else {
-        return res
-          .status(500)
-          .json({ message: 'Failed to create shift', error: err })
-      }
+      return res.status(400).json({ error: err.message })
     }
-    return res.status(200).json({ message: 'Shift created successfully' })
+    return res.status(201).json({ message: 'Shift created successfully' })
   }
 
   async update(req, res) {
@@ -80,17 +81,22 @@ class ShiftController {
     const { id } = req.params
 
     try {
-      const shift = await Shift.findByPk(id)
-      if (!shift) throw new Error('Shift not found')
+      await sequelize.transaction(async (transaction) => {
+        const shift = await Shift.findByPk(id, { transaction })
+        if (!shift) throw new Error('Shift not found')
 
-      if (!isValid(start_time) || !isValid(end_time)) {
-        return res.status(400).json({ error: 'Invalid data type' })
-      }
+        if (!isValid(start_time) || !isValid(end_time)) {
+          return res.status(400).json({ error: 'Invalid data type' })
+        }
 
-      const nameExists = await Shift.findOne({ where: { name } })
-      if (nameExists.id != id) throw new Error('Name already in use')
+        const nameExists = await Shift.findOne({ transaction, where: { name } })
+        if (nameExists.id !== id) throw new Error('Name already in use')
 
-      await Shift.create({ name, start_time, end_time, sponsor })
+        await Shift.create(
+          { name, start_time, end_time, sponsor },
+          { transaction }
+        )
+      })
     } catch (err) {
       if (err.message) {
         return res.status(400).json({ error: err.message })
@@ -100,7 +106,7 @@ class ShiftController {
           .json({ message: 'Failed to create shift', error: err })
       }
     }
-    return res.status(200).json({ message: 'Shift created successfully' })
+    return res.status(201).json({ message: 'Shift updated successfully' })
   }
 
   async delete(req, res) {
@@ -115,14 +121,9 @@ class ShiftController {
 
       await Shift.destroy({ where: { id } })
     } catch (err) {
-      if (err.message) {
-        return res.status(400).json({ error: err.message })
-      } else {
-        return res
-          .status(500)
-          .json({ message: 'Failed to delete shift', error: err })
-      }
+      return res.status(400).json({ error: err.message })
     }
+    return res.status(204).json()
   }
 }
 

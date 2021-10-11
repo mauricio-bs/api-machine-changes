@@ -1,5 +1,5 @@
 import CNC from '../model/machine/CNC'
-import Manufacturer from '../model/machine/Manufacturer'
+import Manufacturer from '../model/manufacturer/Manufacturer'
 import componentValidation from '../validation/componentValidation'
 import sequelize, { Op } from 'sequelize'
 
@@ -9,11 +9,11 @@ class CncController {
 
     let match = {}
 
-    if (!!manufacturer) {
+    if (manufacturer) {
       match.cnc_manufacturer = manufacturer
     }
 
-    if (!!query) {
+    if (query) {
       match = {
         ...match,
         [Op.or]: [
@@ -48,6 +48,7 @@ class CncController {
       return res.status(500).json({ error: err })
     }
   }
+
   async store(req, res) {
     if (!(await componentValidation.isValid(req.body))) {
       return res.status(400).json({ error: 'Invalid data type' })
@@ -92,7 +93,7 @@ class CncController {
       if (!manufacturerExists) throw new Error('Manufacturer not found')
 
       const modelExists = CNC.findOne({ where: { model } })
-      if (modelExists.id != id) throw new Error('Model already registered')
+      if (modelExists.id !== id) throw new Error('Model already registered')
 
       await CNC.update({ model, manufacturer }, { where: { id } })
     } catch (err) {

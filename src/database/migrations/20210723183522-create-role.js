@@ -8,11 +8,11 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        unique: true,
       },
       name: {
         type: Sequelize.STRING,
         allowNull: false,
+        unique: true,
       },
       created_at: {
         type: Sequelize.DATE,

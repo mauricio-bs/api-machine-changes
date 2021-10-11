@@ -1,5 +1,5 @@
 import Driver from '../model/machine/Driver'
-import Manufacturer from '../model/machine/Manufacturer'
+import Manufacturer from '../model/manufacturer/Manufacturer'
 import componentValidation from '../validation/componentValidation'
 import sequelize, { Op } from 'sequelize'
 
@@ -9,11 +9,11 @@ class DriverController {
 
     let match = {}
 
-    if (!!manufacturer) {
+    if (manufacturer) {
       match.driver_manufacturer = manufacturer
     }
 
-    if (!!query) {
+    if (query) {
       match = {
         ...match,
         [Op.or]: [
@@ -50,6 +50,7 @@ class DriverController {
       return res.status(500).json({ error: err })
     }
   }
+
   async store(req, res) {
     if (!(await componentValidation.isValid(req.body))) {
       return res.status(400).json({ error: 'Invalid data type' })
@@ -94,7 +95,7 @@ class DriverController {
       if (!manufacturerExists) throw new Error('Manufacturer not found')
 
       const modelExists = Driver.findOne({ where: { model } })
-      if (modelExists.id != id) throw new Error('Model already registered')
+      if (modelExists.id !== id) throw new Error('Model already registered')
 
       await Driver.update({ model, manufacturer }, { where: { id } })
     } catch (err) {
